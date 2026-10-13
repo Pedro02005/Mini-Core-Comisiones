@@ -1,0 +1,196 @@
+
+.contenedor {
+  max-width: 1250px;
+  margin: auto;
+  padding: 25px;
+}
+
+header {
+  background: #161b22;
+  padding: 25px;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+h1 {
+  font-size: 25px;
+  margin-top: 0;
+}
+
+h2 {
+  font-size: 20px;
+  margin-top: 0;
+}
+
+nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+button {
+  padding: 11px 16px;
+  background: #238636;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.85;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+nav button {
+  background: #21262d;
+}
+
+nav button.activo {
+  background: #1f6feb;
+}
+
+section {
+  background: #161b22;
+  border: 1px solid #30363d;
+  padding: 25px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+form, .filtros {
+  display: flex;
+  gap: 15px;
+  align-items: end;
+  flex-wrap: wrap;
+}
+
+.filtros label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+input, select {
+  padding: 11px;
+  background: #0d1117;
+  color: white;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  min-width: 180px;
+}
+
+.tabla-contenedor {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+th, td {
+  padding: 13px;
+  border-bottom: 1px solid #30363d;
+  text-align: left;
+}
+
+th {
+  background: #21262d;
+}
+
+tr:hover {
+  background: #21262d;
+}
+
+.eliminar {
+  background: #da3633;
+}
+
+.mensaje {
+  background: #21262d;
+  padding: 13px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.resumen {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.resumen div {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+}
+
+.resumen h3 {
+  font-size: 24px;
+  color: #58a6ff;
+  margin: 0;
+}
+
+.resumen p {
+  color: #8b949e;
+  margin-bottom: 0;
+}
+
+.vendedor {
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.vendedor-boton {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  background: #21262d;
+  padding: 18px;
+  text-align: left;
+}
+
+.detalle {
+  padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .resumen {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  form, .filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  input, select {
+    width: 100%;
+  }
+
+  .vendedor-boton {
+    flex-direction: column;
+    align-items: start;
+  }
+}
+
+@media (max-width: 420px) {
+  .resumen {
+    grid-template-columns: 1fr;
+  }
+}

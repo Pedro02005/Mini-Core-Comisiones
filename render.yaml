@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: mini-core-mvc-postgres
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: SEED_DEMO
+        value: "true"
