@@ -13,6 +13,8 @@ function App() {
   const [expandido, setExpandido] = useState(null)
   const [cargando, setCargando] = useState(false)
   const [mensaje, setMensaje] = useState('')
+  const [cargaInicial, setCargaInicial] = useState(true)
+  const [errorInicial, setErrorInicial] = useState(false)
 
   const [form, setForm] = useState({
     vendedor: '',
@@ -43,8 +45,9 @@ function App() {
   useEffect(() => {
     cargarDatos().catch(error => {
       console.error(error)
-      setMensaje('Error al conectar con Django')
-    })
+      setErrorInicial(true)
+      setMensaje('No se pudieron cargar los datos. Recarga la página para reintentar.')
+    }).finally(() => setCargaInicial(false))
   }, [])
 
   // Guardar venta
@@ -187,7 +190,7 @@ function App() {
                 required
               />
 
-              <button type="submit" disabled={cargando}>
+              <button type="submit" disabled={cargando || cargaInicial || errorInicial}>
                 Guardar Venta
               </button>
             </form>
@@ -224,7 +227,7 @@ function App() {
                       <td>
                         <button
                           className="eliminar"
-                          disabled={cargando}
+                          disabled={cargando || cargaInicial || errorInicial}
                           onClick={() => eliminarVenta(venta.id)}
                         >
                           Eliminar
@@ -235,7 +238,8 @@ function App() {
                 </tbody>
               </table>
 
-              {ventas.length === 0 && (
+              {cargaInicial && <p role="status">Cargando vendedores y ventas…</p>}
+              {!cargaInicial && !errorInicial && ventas.length === 0 && (
                 <p>No hay ventas registradas</p>
               )}
             </div>
@@ -274,7 +278,7 @@ function App() {
                 />
               </div>
 
-              <button onClick={calcularComisiones} disabled={cargando}>
+              <button onClick={calcularComisiones} disabled={cargando || cargaInicial || errorInicial}>
                 {cargando ? 'Calculando...' : 'Calcular Comisiones'}
               </button>
             </div>

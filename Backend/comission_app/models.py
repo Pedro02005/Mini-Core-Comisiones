@@ -74,10 +74,9 @@ class Venta(models.Model):
     def __str__(self):
         return f"{self.vendedor.nombre} - ${self.monto} ({self.fecha_venta})"
 
-    def calcular_comision(self):
-        reglas = Regla.objects.filter(
-            activa=True
-        ).order_by('-monto_minimo')
+    def calcular_comision(self, reglas=None):
+        if reglas is None:
+            reglas = Regla.objects.filter(activa=True).order_by('-monto_minimo')
 
         for regla in reglas:
             if self.monto >= regla.monto_minimo:

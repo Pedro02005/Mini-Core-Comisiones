@@ -1,9 +1,16 @@
 
+from django.utils.functional import cached_property
 from rest_framework import serializers
 from .models import Vendedor, Regla, Venta, ComisionCalculada
 
 
-class VendedorSerializer(serializers.ModelSerializer):
+class ReglasComisionMixin:
+    @cached_property
+    def reglas_comision(self):
+        return list(Regla.objects.filter(activa=True).order_by('-monto_minimo'))
+
+
+class VendedorSerializer(ReglasComisionMixin, serializers.ModelSerializer):
     total_ventas = serializers.SerializerMethodField()
     total_comisiones = serializers.SerializerMethodField()
 
@@ -20,7 +27,7 @@ class VendedorSerializer(serializers.ModelSerializer):
 
     def get_total_comisiones(self, obj):
         total = sum(
-            venta.calcular_comision()['comision']
+            venta.calcular_comision(self.reglas_comision)['comision']
             for venta in obj.ventas.all()
         )
         return float(total)
@@ -41,7 +48,7 @@ class ReglaSerializer(serializers.ModelSerializer):
         return f"{float(obj.porcentaje) * 100:.2f}%"
 
 
-class VentaSerializer(serializers.ModelSerializer):
+class VentaSerializer(ReglasComisionMixin, serializers.ModelSerializer):
     vendedor_nombre = serializers.CharField(
         source='vendedor.nombre',
         read_only=True
@@ -60,7 +67,7 @@ class VentaSerializer(serializers.ModelSerializer):
         ]
 
     def get_comision_calculada(self, obj):
-        datos = obj.calcular_comision()
+        datos = obj.calcular_comision(self.reglas_comision)
         regla = datos['regla_aplicada']
 
         return {

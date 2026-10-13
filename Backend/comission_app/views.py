@@ -20,7 +20,7 @@ from .serializers import (
 
 # GESTIÓN DE VENDEDORES
 class VendedorViewSet(viewsets.ModelViewSet):
-    queryset = Vendedor.objects.all()
+    queryset = Vendedor.objects.prefetch_related('ventas')
     serializer_class = VendedorSerializer
 
     @action(detail=True, methods=['get'])
@@ -41,8 +41,9 @@ class VendedorViewSet(viewsets.ModelViewSet):
         total_monto_ventas = Decimal('0.00')
         detalle = []
 
+        reglas = list(Regla.objects.filter(activa=True).order_by('-monto_minimo'))
         for venta in ventas:
-            datos = venta.calcular_comision()
+            datos = venta.calcular_comision(reglas)
             total_comisiones += datos['comision']
             total_monto_ventas += venta.monto
 
@@ -82,7 +83,7 @@ class VentaViewSet(viewsets.ModelViewSet):
     serializer_class = VentaSerializer
 
     def get_queryset(self):
-        ventas = Venta.objects.all()
+        ventas = Venta.objects.select_related('vendedor')
 
         vendedor = self.request.query_params.get('vendedor')
         fecha_inicio = self.request.query_params.get('fecha_inicio')
@@ -136,6 +137,7 @@ class CalcularComisionesView(APIView):
 
         vendedores = {}
 
+        reglas = list(Regla.objects.filter(activa=True).order_by('-monto_minimo'))
         for venta in ventas:
             nombre = venta.vendedor.nombre
 
@@ -150,7 +152,7 @@ class CalcularComisionesView(APIView):
                     'comisiones_individuales': []
                 }
 
-            datos = venta.calcular_comision()
+            datos = venta.calcular_comision(reglas)
             grupo = vendedores[nombre]
             regla = datos['regla_aplicada']
 
@@ -232,7 +234,7 @@ class ResumenComisionesView(APIView):
         fecha_inicio = request.query_params.get('fecha_inicio')
         fecha_fin = request.query_params.get('fecha_fin')
 
-        ventas = Venta.objects.all()
+        ventas = Venta.objects.select_related('vendedor')
 
         if fecha_inicio:
             ventas = ventas.filter(
@@ -250,8 +252,9 @@ class ResumenComisionesView(APIView):
             or Decimal('0.00')
         )
 
+        reglas = list(Regla.objects.filter(activa=True).order_by('-monto_minimo'))
         total_comisiones = sum(
-            (venta.calcular_comision()['comision']
+            (venta.calcular_comision(reglas)['comision']
              for venta in ventas),
             Decimal('0.00')
         )

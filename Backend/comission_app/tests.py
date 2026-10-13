@@ -83,3 +83,20 @@ class DatabaseConfigurationTests(TestCase):
         self.assertEqual(config['OPTIONS']['sslmode'], 'require')
         self.assertEqual(config['CONN_MAX_AGE'], 0)
         self.assertTrue(config['DISABLE_SERVER_SIDE_CURSORS'])
+
+
+class QueryEfficiencyTests(TestCase):
+    def setUp(self):
+        call_command('seed_demo', stdout=StringIO())
+
+    def test_sale_list_has_constant_query_count(self):
+        with self.assertNumQueries(2):
+            response = self.client.get('/api/ventas/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 144)
+
+    def test_seller_list_has_constant_query_count(self):
+        with self.assertNumQueries(3):
+            response = self.client.get('/api/vendedores/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(sum(seller['total_ventas'] for seller in response.json()), 144)
