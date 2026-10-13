@@ -39,7 +39,7 @@ El comando `seed_demo` crea **6 vendedores, 144 ventas y 6 reglas**, distribuido
 
 Hay ventas de $75 sin comisión y ventas exactamente en los límites. Ejemplos: $500 genera $25; $1.000 genera $80; $5.000 genera $600. La comisión se calcula por venta, no sobre el total mensual de un vendedor.
 
-El comando solo carga datos cuando vendedores, reglas y ventas están vacíos. No sobrescribe datos existentes. En desarrollo se ejecuta manualmente; el contenedor lo ejecuta automáticamente después de las migraciones.
+El comando solo carga datos cuando vendedores, reglas y ventas están vacíos. No sobrescribe datos existentes. En desarrollo se ejecuta manualmente; el contenedor lo ejecuta después de las migraciones cuando SEED_DEMO=true.
 
 ## Ejecutar en Windows
 
@@ -64,16 +64,14 @@ npm.cmd run dev
 
 Abrir **http://localhost:3000**. API: **http://127.0.0.1:8000/api/**. Opcionalmente crear un administrador con `..\.venv\Scripts\python.exe manage.py createsuperuser` desde `Backend`.
 
-Las variables se leen del entorno; no se cargan archivos `.env` automáticamente. El desarrollo usa SQLite en desarrollo y PostgreSQL en la nube local y DEBUG habilitado por defecto.
+Las variables se leen del entorno; no se cargan archivos `.env` automáticamente. El desarrollo usa SQLite local y DEBUG habilitado por defecto.
 
 
-### Comportamiento de la demo
+### Comportamiento de los datos
 
-SQLite en desarrollo y PostgreSQL en la nube está en el almacenamiento temporal del servicio. Los cambios se mantienen mientras ese almacenamiento exista; se pierden cuando Render lo descarta al reiniciar, redesplegar o suspender el servicio. Al arrancar con una base vacía se recrea la demo. No se restablece en cada petición ni es una sesión independiente por visitante: todos usan los mismos datos.
+En la nube, los datos se guardan en PostgreSQL y se conservan al reiniciar el servidor. En desarrollo se usa SQLite local si no se proporciona DATABASE_URL. Todos los visitantes comparten los mismos datos.
 
-El plan gratuito se suspende después de 15 minutos sin tráfico y tarda aproximadamente un minuto en despertar. Abrir el enlace unos minutos antes de la exposición. No se necesita PostgreSQL ni un disco de pago. Revisar los [límites actuales de Render Free](https://render.com/docs/free).
-
-Esta demo permite modificar datos públicamente y no crea credenciales de administrador. Utilizar únicamente información ficticia. Para un sistema real habría que añadir autenticación, permisos y almacenamiento persistente.
+La demo permite modificar información públicamente y no crea credenciales de administrador. Para un sistema real habría que añadir autenticación y permisos.
 
 ## API
 
@@ -92,7 +90,7 @@ El cálculo por período devuelve resultados sin guardarlos en `ComisionCalculad
 
 Desde `Backend`, ejecutar `..\.venv\Scripts\python.exe manage.py test`. Desde `Fronted`, ejecutar `npm.cmd run build`.
 
-Referencias: [Django en Render](https://render.com/docs/deploy-django), [Blueprints](https://render.com/docs/blueprint-spec) y [WhiteNoise](https://whitenoise.readthedocs.io/en/stable/django.html).
+
 
 
 ## Base de datos persistente
